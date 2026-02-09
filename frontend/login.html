@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Code Review & Rewrite Agent 🤖</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body class="bg-gray-900 text-gray-100 min-h-screen">
+    <div class="container mx-auto px-4 py-8 max-w-7xl">
+        <!-- Header -->
+        <div class="text-center mb-8">
+            <h1 class="text-5xl font-bold mb-2 bg-gradient-to-r from-blue-400 to-purple-600 bg-clip-text text-transparent">
+                🤖 AI Code Review & Rewrite Agent
+            </h1>
+            <p class="text-gray-400 text-lg">Review + Fix Code with Groq + Llama 3.3 • Lightning Fast</p>
+        </div>
+
+        <!-- Main Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- Input Section -->
+            <div class="bg-gray-800 rounded-lg shadow-2xl p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-2xl font-bold text-blue-400">📝 Your Code</h2>
+                    <select id="language" class="bg-gray-700 text-white px-4 py-2 rounded-lg border border-gray-600 focus:outline-none focus:border-blue-500">
+                        <option value="python">Python</option>
+                        <option value="javascript">JavaScript</option>
+                        <option value="typescript">TypeScript</option>
+                        <option value="java">Java</option>
+                        <option value="cpp">C++</option>
+                        <option value="go">Go</option>
+                        <option value="rust">Rust</option>
+                        <option value="php">PHP</option>
+                    </select>
+                </div>
+
+                <textarea 
+                    id="codeInput" 
+                    class="w-full h-96 bg-gray-900 text-gray-100 p-4 rounded-lg border border-gray-700 focus:outline-none focus:border-blue-500 font-mono text-sm resize-none"
+                    placeholder="Paste your code here..."
+                ></textarea>
+
+                <!-- Focus Areas -->
+                <div class="mt-4">
+                    <h3 class="text-sm font-semibold mb-2 text-gray-300">Focus Areas:</h3>
+                    <div class="flex flex-wrap gap-2">
+                        <label class="flex items-center space-x-2 bg-gray-700 px-3 py-1 rounded-full cursor-pointer hover:bg-gray-600">
+                            <input type="checkbox" checked class="focus-area" value="bugs">
+                            <span class="text-sm">🐛 Bugs</span>
+                        </label>
+                        <label class="flex items-center space-x-2 bg-gray-700 px-3 py-1 rounded-full cursor-pointer hover:bg-gray-600">
+                            <input type="checkbox" checked class="focus-area" value="performance">
+                            <span class="text-sm">⚡ Performance</span>
+                        </label>
+                        <label class="flex items-center space-x-2 bg-gray-700 px-3 py-1 rounded-full cursor-pointer hover:bg-gray-600">
+                            <input type="checkbox" checked class="focus-area" value="security">
+                            <span class="text-sm">🔒 Security</span>
+                        </label>
+                        <label class="flex items-center space-x-2 bg-gray-700 px-3 py-1 rounded-full cursor-pointer hover:bg-gray-600">
+                            <input type="checkbox" checked class="focus-area" value="best_practices">
+                            <span class="text-sm">✨ Best Practices</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Buttons -->
+                <div class="flex gap-3 mt-6">
+                    <button 
+                        id="reviewBtn" 
+                        class="flex-1 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-bold py-3 px-6 rounded-lg transition-all duration-200 transform hover:scale-105 shadow-lg"
+                    >
+                        🚀 Review Code
+                    </button>
+                    <button 
+                        id="rewriteBtn" 
+                        class="flex-1 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold py-3 px-6 rounded-lg transition-all duration-200 transform hover:scale-105 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                        disabled
+                    >
+                        ✨ Fix & Rewrite
+                    </button>
+                </div>
+
+                <!-- Loading State -->
+                <div id="loading" class="hidden mt-4 flex items-center justify-center space-x-2 text-blue-400">
+                    <svg class="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    <span id="loadingText">Processing...</span>
+                </div>
+            </div>
+
+            <!-- Output Section -->
+            <div class="bg-gray-800 rounded-lg shadow-2xl p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-2xl font-bold text-purple-400">📊 Results</h2>
+                    <div id="stats" class="hidden text-sm text-gray-400">
+                        <span id="issuesCount">0 issues</span>
+                    </div>
+                </div>
+
+                <!-- Tabs -->
+                <div class="flex gap-2 mb-4 border-b border-gray-700">
+                    <button id="reviewTab" class="px-4 py-2 text-blue-400 border-b-2 border-blue-400 font-semibold cursor-pointer">
+                        📋 Review
+                    </button>
+                    <button id="rewriteTab" class="px-4 py-2 text-gray-400 border-b-2 border-transparent font-semibold cursor-pointer hover:text-gray-300">
+                        ✨ Rewritten Code
+                    </button>
+                </div>
+
+                <!-- Issue Breakdown -->
+                <div id="breakdown" class="hidden mb-4 grid grid-cols-4 gap-2">
+                    <div class="bg-red-900 bg-opacity-20 border border-red-500 rounded p-2 text-center">
+                        <div class="text-2xl font-bold text-red-400" id="criticalCount">0</div>
+                        <div class="text-xs text-red-300">Critical</div>
+                    </div>
+                    <div class="bg-orange-900 bg-opacity-20 border border-orange-500 rounded p-2 text-center">
+                        <div class="text-2xl font-bold text-orange-400" id="highCount">0</div>
+                        <div class="text-xs text-orange-300">High</div>
+                    </div>
+                    <div class="bg-yellow-900 bg-opacity-20 border border-yellow-500 rounded p-2 text-center">
+                        <div class="text-2xl font-bold text-yellow-400" id="mediumCount">0</div>
+                        <div class="text-xs text-yellow-300">Medium</div>
+                    </div>
+                    <div class="bg-green-900 bg-opacity-20 border border-green-500 rounded p-2 text-center">
+                        <div class="text-2xl font-bold text-green-400" id="lowCount">0</div>
+                        <div class="text-xs text-green-300">Low</div>
+                    </div>
+                </div>
+
+                <!-- Review Tab Content -->
+                <div id="reviewContent" class="prose prose-invert max-w-none overflow-y-auto max-h-[600px] bg-gray-900 rounded-lg p-4 border border-gray-700">
+                    <p class="text-gray-500 text-center py-8">Your code review will appear here...</p>
+                </div>
+
+                <!-- Rewrite Tab Content -->
+                <div id="rewriteContent" class="hidden overflow-y-auto max-h-[600px]">
+                    <!-- Explanation -->
+                    <div class="mb-4 bg-gray-900 rounded-lg p-4 border border-gray-700">
+                        <h3 class="text-green-400 font-bold mb-2">📝 Changes Made:</h3>
+                        <p id="rewriteExplanation" class="text-gray-300"></p>
+                    </div>
+
+                    <!-- Improvements List -->
+                    <div class="mb-4 bg-gray-900 rounded-lg p-4 border border-gray-700">
+                        <h3 class="text-green-400 font-bold mb-2">🎯 Key Improvements:</h3>
+                        <ul id="improvementsList" class="space-y-2"></ul>
+                    </div>
+
+                    <!-- Rewritten Code -->
+                    <div class="bg-gray-900 rounded-lg p-4 border border-gray-700">
+                        <div class="flex items-center justify-between mb-2">
+                            <h3 class="text-green-400 font-bold">✨ Rewritten Code:</h3>
+                            <button id="copyRewriteBtn" class="text-sm bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded transition-all">
+                                📋 Copy
+                            </button>
+                        </div>
+                        <pre id="rewriteCode" class="bg-black rounded p-3 overflow-x-auto max-h-96 text-sm"><code class="language-python"></code></pre>
+                    </div>
+                </div>
+
+                <!-- Copy Button -->
+                <button 
+                    id="copyBtn" 
+                    class="hidden w-full mt-4 bg-gray-700 hover:bg-gray-600 text-white font-medium py-2 px-4 rounded-lg transition-all"
+                >
+                    📋 Copy Review
+                </button>
+            </div>
+        </div>
+
+        <!-- Example Snippets -->
+        <div class="mt-8 bg-gray-800 rounded-lg p-6">
+            <h3 class="text-xl font-bold mb-4 text-blue-400">💡 Try These Examples</h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <button class="example-btn bg-gray-700 hover:bg-gray-600 p-4 rounded-lg text-left transition-all" data-lang="python" data-code="def calculate_average(numbers):
+    total = 0
+    for num in numbers:
+        total = total + num
+    return total / len(numbers)
+
+result = calculate_average([1, 2, 3, 4, 5])
+print(result)">
+                    <div class="text-blue-400 font-semibold mb-1">🐍 Python - Division by Zero</div>
+                    <div class="text-sm text-gray-400">Missing error handling</div>
+                </button>
+
+                <button class="example-btn bg-gray-700 hover:bg-gray-600 p-4 rounded-lg text-left transition-all" data-lang="javascript" data-code="async function fetchData(url) {
+    const response = await fetch(url);
+    const data = await response.json();
+    return data;
+}
+
+fetchData('https://api.example.com/data');">
+                    <div class="text-yellow-400 font-semibold mb-1">🟨 JavaScript - No Error Handling</div>
+                    <div class="text-sm text-gray-400">Unhandled promise rejections</div>
+                </button>
+
+                <button class="example-btn bg-gray-700 hover:bg-gray-600 p-4 rounded-lg text-left transition-all" data-lang="python" data-code="def get_user(username):
+    conn = sqlite3.connect('users.db')
+    cursor = conn.cursor()
+    query = f\"SELECT * FROM users WHERE username = '{username}'\"
+    cursor.execute(query)
+    return cursor.fetchone()">
+                    <div class="text-red-400 font-semibold mb-1">🔴 Python - SQL Injection</div>
+                    <div class="text-sm text-gray-400">Critical security vulnerability</div>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:8000';
+        let currentReview = null;
+
+        // Elements
+        const codeInput = document.getElementById('codeInput');
+        const languageSelect = document.getElementById('language');
+        const reviewBtn = document.getElementById('reviewBtn');
+        const rewriteBtn = document.getElementById('rewriteBtn');
+        const loading = document.getElementById('loading');
+        const loadingText = document.getElementById('loadingText');
+        const reviewOutput = document.getElementById('reviewContent');
+        const rewriteOutput = document.getElementById('rewriteContent');
+        const copyBtn = document.getElementById('copyBtn');
+        const copyRewriteBtn = document.getElementById('copyRewriteBtn');
+        const statsDiv = document.getElementById('stats');
+        const breakdownDiv = document.getElementById('breakdown');
+        const reviewTab = document.getElementById('reviewTab');
+        const rewriteTab = document.getElementById('rewriteTab');
+
+        // Tab switching
+        reviewTab.addEventListener('click', () => {
+            reviewOutput.classList.remove('hidden');
+            rewriteOutput.classList.add('hidden');
+            reviewTab.classList.add('border-b-2', 'border-blue-400', 'text-blue-400');
+            reviewTab.classList.remove('border-transparent', 'text-gray-400');
+            rewriteTab.classList.remove('border-b-2', 'border-blue-400', 'text-blue-400');
+            rewriteTab.classList.add('border-transparent', 'text-gray-400');
+            copyBtn.classList.remove('hidden');
+            copyRewriteBtn.parentElement.parentElement.classList.add('hidden');
+        });
+
+        rewriteTab.addEventListener('click', () => {
+            reviewOutput.classList.add('hidden');
+            rewriteOutput.classList.remove('hidden');
+            rewriteTab.classList.add('border-b-2', 'border-blue-400', 'text-blue-400');
+            rewriteTab.classList.remove('border-transparent', 'text-gray-400');
+            reviewTab.classList.remove('border-b-2', 'border-blue-400', 'text-blue-400');
+            reviewTab.classList.add('border-transparent', 'text-gray-400');
+            copyBtn.classList.add('hidden');
+            copyRewriteBtn.parentElement.parentElement.classList.remove('hidden');
+        });
+
+        // Example buttons
+        document.querySelectorAll('.example-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                codeInput.value = btn.dataset.code;
+                languageSelect.value = btn.dataset.lang;
+            });
+        });
+
+        // Review button click
+        reviewBtn.addEventListener('click', async () => {
+            await performReview();
+        });
+
+        // Rewrite button click
+        rewriteBtn.addEventListener('click', async () => {
+            if (!currentReview) {
+                alert('Please review code first!');
+                return;
+            }
+            await performRewrite();
+        });
+
+        async function performReview() {
+            const code = codeInput.value.trim();
+            if (!code) {
+                alert('Please enter some code to review!');
+                return;
+            }
+
+            const focusAreas = Array.from(document.querySelectorAll('.focus-area:checked'))
+                .map(cb => cb.value);
+
+            loading.classList.remove('hidden');
+            loadingText.textContent = 'Analyzing your code...';
+            reviewBtn.disabled = true;
+            reviewBtn.textContent = '⏳ Reviewing...';
+            rewriteBtn.disabled = true;
+
+            try {
+                const response = await fetch(`${API_URL}/api/review`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        code: code,
+                        language: languageSelect.value,
+                        focus_areas: focusAreas
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                currentReview = data.review;
+
+                // Update stats
+                statsDiv.classList.remove('hidden');
+                document.getElementById('issuesCount').textContent = 
+                    `${data.issues_found} issue${data.issues_found !== 1 ? 's' : ''} found`;
+
+                // Update breakdown
+                breakdownDiv.classList.remove('hidden');
+                document.getElementById('criticalCount').textContent = data.severity_breakdown.critical;
+                document.getElementById('highCount').textContent = data.severity_breakdown.high;
+                document.getElementById('mediumCount').textContent = data.severity_breakdown.medium;
+                document.getElementById('lowCount').textContent = data.severity_breakdown.low;
+
+                // Display review
+                reviewOutput.innerHTML = marked.parse(data.review);
+                reviewOutput.querySelectorAll('pre code').forEach((block) => {
+                    hljs.highlightElement(block);
+                });
+
+                copyBtn.classList.remove('hidden');
+                copyBtn.onclick = () => {
+                    navigator.clipboard.writeText(data.review);
+                    copyBtn.textContent = '✅ Copied!';
+                    setTimeout(() => { copyBtn.textContent = '📋 Copy Review'; }, 2000);
+                };
+
+                rewriteBtn.disabled = false;
+
+            } catch (error) {
+                reviewOutput.innerHTML = `
+                    <div class="bg-red-900 bg-opacity-20 border border-red-500 rounded p-4">
+                        <h3 class="text-red-400 font-bold mb-2">❌ Error</h3>
+                        <p class="text-red-300">${error.message}</p>
+                    </div>
+                `;
+            } finally {
+                loading.classList.add('hidden');
+                reviewBtn.disabled = false;
+                reviewBtn.textContent = '🚀 Review Code';
+            }
+        }
+
+        async function performRewrite() {
+            loadingText.textContent = 'Rewriting your code...';
+            loading.classList.remove('hidden');
+            rewriteBtn.disabled = true;
+            rewriteBtn.textContent = '⏳ Rewriting...';
+
+            try {
+                const response = await fetch(`${API_URL}/api/rewrite`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        code: codeInput.value.trim(),
+                        language: languageSelect.value,
+                        review: currentReview
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+
+                // Display rewritten code
+                const codeElement = document.querySelector('#rewriteCode code');
+                codeElement.textContent = data.rewritten_code;
+                codeElement.className = `language-${languageSelect.value}`;
+                hljs.highlightElement(codeElement);
+
+                // Display explanation
+                document.getElementById('rewriteExplanation').textContent = data.explanation;
+
+                // Display improvements
+                const improvementsList = document.getElementById('improvementsList');
+                improvementsList.innerHTML = data.improvements.map(imp => 
+                    `<li class="text-gray-300">✓ ${imp}</li>`
+                ).join('');
+
+                // Copy button
+                copyRewriteBtn.onclick = () => {
+                    navigator.clipboard.writeText(data.rewritten_code);
+                    copyRewriteBtn.textContent = '✅ Copied!';
+                    setTimeout(() => { copyRewriteBtn.textContent = '📋 Copy'; }, 2000);
+                };
+
+                // Switch to rewrite tab
+                rewriteTab.click();
+
+            } catch (error) {
+                alert(`Error: ${error.message}`);
+            } finally {
+                loading.classList.add('hidden');
+                rewriteBtn.disabled = false;
+                rewriteBtn.textContent = '✨ Fix & Rewrite';
+            }
+        }
+    </script>
+</body>
+</html>
