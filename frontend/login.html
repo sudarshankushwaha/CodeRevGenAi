@@ -10,11 +10,11 @@
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 <body class="bg-gray-900 text-gray-100 min-h-screen">
-    <div class="container mx-auto px-4 py-8 max-w-7xl">
-        <!-- Header -->
+<div class="container mx-auto px-4 py-8 max-w-7xl"
+        < Header -->
         <div class="text-center mb-8">
             <h1 class="text-5xl font-bold mb-2 bg-gradient-to-r from-blue-400 to-purple-600 bg-clip-text text-transparent">
-                🤖 AI Code Review & Rewrite Agent
+                AI Code Review & Rewrite Agent
             </h1>
             <p class="text-gray-400 text-lg">Review + Fix Code with Groq + Llama 3.3 • Lightning Fast</p>
         </div>
@@ -24,7 +24,7 @@
             <!-- Input Section -->
             <div class="bg-gray-800 rounded-lg shadow-2xl p-6">
                 <div class="flex items-center justify-between mb-4">
-                    <h2 class="text-2xl font-bold text-blue-400">📝 Your Code</h2>
+                    <h2 class="text-2xl font-bold text-blue-400"> Your Code</h2>
                     <select id="language" class="bg-gray-700 text-white px-4 py-2 rounded-lg border border-gray-600 focus:outline-none focus:border-blue-500">
                         <option value="python">Python</option>
                         <option value="javascript">JavaScript</option>
@@ -49,19 +49,19 @@
                     <div class="flex flex-wrap gap-2">
                         <label class="flex items-center space-x-2 bg-gray-700 px-3 py-1 rounded-full cursor-pointer hover:bg-gray-600">
                             <input type="checkbox" checked class="focus-area" value="bugs">
-                            <span class="text-sm">🐛 Bugs</span>
+                            <span class="text-sm">Bugs</span>
                         </label>
                         <label class="flex items-center space-x-2 bg-gray-700 px-3 py-1 rounded-full cursor-pointer hover:bg-gray-600">
                             <input type="checkbox" checked class="focus-area" value="performance">
-                            <span class="text-sm">⚡ Performance</span>
+                            <span class="text-sm">Performance</span>
                         </label>
                         <label class="flex items-center space-x-2 bg-gray-700 px-3 py-1 rounded-full cursor-pointer hover:bg-gray-600">
                             <input type="checkbox" checked class="focus-area" value="security">
-                            <span class="text-sm">🔒 Security</span>
+                            <span class="text-sm">Security</span>
                         </label>
                         <label class="flex items-center space-x-2 bg-gray-700 px-3 py-1 rounded-full cursor-pointer hover:bg-gray-600">
                             <input type="checkbox" checked class="focus-area" value="best_practices">
-                            <span class="text-sm">✨ Best Practices</span>
+                            <span class="text-sm">Best Practices</span>
                         </label>
                     </div>
                 </div>
@@ -72,14 +72,14 @@
                         id="reviewBtn" 
                         class="flex-1 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-bold py-3 px-6 rounded-lg transition-all duration-200 transform hover:scale-105 shadow-lg"
                     >
-                        🚀 Review Code
+                        Review Code
                     </button>
                     <button 
                         id="rewriteBtn" 
                         class="flex-1 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold py-3 px-6 rounded-lg transition-all duration-200 transform hover:scale-105 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
                         disabled
                     >
-                        ✨ Fix & Rewrite
+                        Fix & Rewrite
                     </button>
                 </div>
 
@@ -96,7 +96,7 @@
             <!-- Output Section -->
             <div class="bg-gray-800 rounded-lg shadow-2xl p-6">
                 <div class="flex items-center justify-between mb-4">
-                    <h2 class="text-2xl font-bold text-purple-400">📊 Results</h2>
+                    <h2 class="text-2xl font-bold text-purple-400">Results</h2>
                     <div id="stats" class="hidden text-sm text-gray-400">
                         <span id="issuesCount">0 issues</span>
                     </div>
@@ -105,10 +105,10 @@
                 <!-- Tabs -->
                 <div class="flex gap-2 mb-4 border-b border-gray-700">
                     <button id="reviewTab" class="px-4 py-2 text-blue-400 border-b-2 border-blue-400 font-semibold cursor-pointer">
-                        📋 Review
+                        Review
                     </button>
                     <button id="rewriteTab" class="px-4 py-2 text-gray-400 border-b-2 border-transparent font-semibold cursor-pointer hover:text-gray-300">
-                        ✨ Rewritten Code
+                        Rewritten Code
                     </button>
                 </div>
 
@@ -141,22 +141,22 @@
                 <div id="rewriteContent" class="hidden overflow-y-auto max-h-[600px]">
                     <!-- Explanation -->
                     <div class="mb-4 bg-gray-900 rounded-lg p-4 border border-gray-700">
-                        <h3 class="text-green-400 font-bold mb-2">📝 Changes Made:</h3>
+                        <h3 class="text-green-400 font-bold mb-2">Changes Made:</h3>
                         <p id="rewriteExplanation" class="text-gray-300"></p>
                     </div>
 
                     <!-- Improvements List -->
                     <div class="mb-4 bg-gray-900 rounded-lg p-4 border border-gray-700">
-                        <h3 class="text-green-400 font-bold mb-2">🎯 Key Improvements:</h3>
+                        <h3 class="text-green-400 font-bold mb-2">Key Improvements:</h3>
                         <ul id="improvementsList" class="space-y-2"></ul>
                     </div>
 
                     <!-- Rewritten Code -->
                     <div class="bg-gray-900 rounded-lg p-4 border border-gray-700">
                         <div class="flex items-center justify-between mb-2">
-                            <h3 class="text-green-400 font-bold">✨ Rewritten Code:</h3>
+                            <h3 class="text-green-400 font-bold">Rewritten Code:</h3>
                             <button id="copyRewriteBtn" class="text-sm bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded transition-all">
-                                📋 Copy
+                                Copy
                             </button>
                         </div>
                         <pre id="rewriteCode" class="bg-black rounded p-3 overflow-x-auto max-h-96 text-sm"><code class="language-python"></code></pre>
@@ -168,14 +168,14 @@
                     id="copyBtn" 
                     class="hidden w-full mt-4 bg-gray-700 hover:bg-gray-600 text-white font-medium py-2 px-4 rounded-lg transition-all"
                 >
-                    📋 Copy Review
+                    Copy Review
                 </button>
             </div>
         </div>
 
         <!-- Example Snippets -->
         <div class="mt-8 bg-gray-800 rounded-lg p-6">
-            <h3 class="text-xl font-bold mb-4 text-blue-400">💡 Try These Examples</h3>
+            <h3 class="text-xl font-bold mb-4 text-blue-400">Try These Examples</h3>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <button class="example-btn bg-gray-700 hover:bg-gray-600 p-4 rounded-lg text-left transition-all" data-lang="python" data-code="def calculate_average(numbers):
     total = 0
@@ -185,7 +185,7 @@
 
 result = calculate_average([1, 2, 3, 4, 5])
 print(result)">
-                    <div class="text-blue-400 font-semibold mb-1">🐍 Python - Division by Zero</div>
+                    <div class="text-blue-400 font-semibold mb-1">Python - Division by Zero</div>
                     <div class="text-sm text-gray-400">Missing error handling</div>
                 </button>
 
@@ -196,7 +196,7 @@ print(result)">
 }
 
 fetchData('https://api.example.com/data');">
-                    <div class="text-yellow-400 font-semibold mb-1">🟨 JavaScript - No Error Handling</div>
+                    <div class="text-yellow-400 font-semibold mb-1">JavaScript - No Error Handling</div>
                     <div class="text-sm text-gray-400">Unhandled promise rejections</div>
                 </button>
 
@@ -206,7 +206,7 @@ fetchData('https://api.example.com/data');">
     query = f\"SELECT * FROM users WHERE username = '{username}'\"
     cursor.execute(query)
     return cursor.fetchone()">
-                    <div class="text-red-400 font-semibold mb-1">🔴 Python - SQL Injection</div>
+                    <div class="text-red-400 font-semibold mb-1">Python - SQL Injection</div>
                     <div class="text-sm text-gray-400">Critical security vulnerability</div>
                 </button>
             </div>
@@ -291,7 +291,7 @@ fetchData('https://api.example.com/data');">
             loading.classList.remove('hidden');
             loadingText.textContent = 'Analyzing your code...';
             reviewBtn.disabled = true;
-            reviewBtn.textContent = '⏳ Reviewing...';
+            reviewBtn.textContent = 'Reviewing...';
             rewriteBtn.disabled = true;
 
             try {
@@ -333,8 +333,8 @@ fetchData('https://api.example.com/data');">
                 copyBtn.classList.remove('hidden');
                 copyBtn.onclick = () => {
                     navigator.clipboard.writeText(data.review);
-                    copyBtn.textContent = '✅ Copied!';
-                    setTimeout(() => { copyBtn.textContent = '📋 Copy Review'; }, 2000);
+                    copyBtn.textContent = 'Copied!';
+                    setTimeout(() => { copyBtn.textContent = 'Copy Review'; }, 2000);
                 };
 
                 rewriteBtn.disabled = false;
@@ -342,14 +342,14 @@ fetchData('https://api.example.com/data');">
             } catch (error) {
                 reviewOutput.innerHTML = `
                     <div class="bg-red-900 bg-opacity-20 border border-red-500 rounded p-4">
-                        <h3 class="text-red-400 font-bold mb-2">❌ Error</h3>
+                        <h3 class="text-red-400 font-bold mb-2">Error</h3>
                         <p class="text-red-300">${error.message}</p>
                     </div>
                 `;
             } finally {
                 loading.classList.add('hidden');
                 reviewBtn.disabled = false;
-                reviewBtn.textContent = '🚀 Review Code';
+                reviewBtn.textContent = 'Review Code';
             }
         }
 
@@ -357,7 +357,7 @@ fetchData('https://api.example.com/data');">
             loadingText.textContent = 'Rewriting your code...';
             loading.classList.remove('hidden');
             rewriteBtn.disabled = true;
-            rewriteBtn.textContent = '⏳ Rewriting...';
+            rewriteBtn.textContent = 'Rewriting...';
 
             try {
                 const response = await fetch(`${API_URL}/api/rewrite`, {
@@ -394,8 +394,8 @@ fetchData('https://api.example.com/data');">
                 // Copy button
                 copyRewriteBtn.onclick = () => {
                     navigator.clipboard.writeText(data.rewritten_code);
-                    copyRewriteBtn.textContent = '✅ Copied!';
-                    setTimeout(() => { copyRewriteBtn.textContent = '📋 Copy'; }, 2000);
+                    copyRewriteBtn.textContent = 'Copied!';
+                    setTimeout(() => { copyRewriteBtn.textContent = 'Copy'; }, 2000);
                 };
 
                 // Switch to rewrite tab
@@ -406,7 +406,7 @@ fetchData('https://api.example.com/data');">
             } finally {
                 loading.classList.add('hidden');
                 rewriteBtn.disabled = false;
-                rewriteBtn.textContent = '✨ Fix & Rewrite';
+                rewriteBtn.textContent = 'Fix & Rewrite';
             }
         }
     </script>
