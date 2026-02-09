@@ -1,0 +1,73 @@
+#1py
+import sqlite3
+
+def get_user_by_username(username):
+    conn = sqlite3.connect('users.db')
+    cursor = conn.cursor()
+    
+    # Vulnerable to SQL injection
+    query = f"SELECT * FROM users WHERE username = '{username}'"
+    cursor.execute(query)
+    
+    result = cursor.fetchone()
+    conn.close()
+    return result
+
+# Usage
+user = get_user_by_username("admin' OR '1'='1")
+print(user)
+
+#2js
+async function fetchUserData(userId) {
+    const response = await fetch(`https://api.example.com/users/${userId}`);
+    const data = await response.json();
+    console.log(data);
+    return data;
+}
+
+async function processUser(userId) {
+    const user = await fetchUserData(userId);
+    const posts = await fetch(`https://api.example.com/users/${user.id}/posts`);
+    return posts.json();
+}
+
+processUser(123);
+
+#3py
+def find_duplicates(numbers):
+    duplicates = []
+    for i in range(len(numbers)):
+        for j in range(i + 1, len(numbers)):
+            if numbers[i] == numbers[j] and numbers[i] not in duplicates:
+                duplicates.append(numbers[i])
+    return duplicates
+
+# Usage
+large_list = list(range(10000)) * 2
+result = find_duplicates(large_list)
+print(result)
+
+#4js
+class DataFetcher {
+    constructor(url) {
+        this.url = url;
+        this.data = [];
+        
+        setInterval(() => {
+            this.fetchData();
+        }, 1000);
+    }
+    
+    async fetchData() {
+        const response = await fetch(this.url);
+        const newData = await response.json();
+        this.data.push(newData);
+    }
+    
+    getData() {
+        return this.data;
+    }
+}
+
+// Usage
+const fetcher = new DataFetcher('https://api.example.com/data');
