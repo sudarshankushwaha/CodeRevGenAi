@@ -1,4 +1,4 @@
-# 🤖 AI Code Review & Rewrite Agent
+#  AI Code Review & Rewrite Agent
 
 > Intelligent code review and automated code refactoring powered by Groq + Llama 3.3 70B
 
