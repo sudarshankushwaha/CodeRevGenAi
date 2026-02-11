@@ -8,7 +8,7 @@ An AI-powered web application that reviews your code for bugs, performance issue
 
 ## Features
 
-### Code Review
+###### Code Review
 - 🔍 **Multi-language support**: Python, JavaScript, TypeScript, Java, C++, Go, Rust, PHP
 - 🎯 **Customizable focus areas**: Bugs, Performance, Security, Best Practices
 - 📊 **Severity breakdown**: Categorizes issues into Critical, High, Medium, and Low priority
