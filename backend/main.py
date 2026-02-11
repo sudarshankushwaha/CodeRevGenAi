@@ -7,6 +7,9 @@ import os
 from dotenv import load_dotenv
 import re
 
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+FRONTEND_DIR = os.path.join(BASE_DIR, "frontend")
+
 # Load environment variables
 load_dotenv()
 app = FastAPI(title="AI Code Review Agent")
@@ -128,7 +131,7 @@ def parse_review_response(review_text: str) -> dict:
 async def serve_login():
     """Serve login page"""
     try:
-        with open("../frontend/login.html", "r", encoding='utf-8') as f:
+        with open(os.path.join(FRONTEND_DIR, "login.html"), "r", encoding="utf-8") as f:
             return HTMLResponse(content=f.read())
     except FileNotFoundError:
         return HTMLResponse(content="<h1>❌ login.html not found</h1>")
@@ -139,7 +142,7 @@ async def serve_login():
 async def serve_tool():
     """Serve the tool page after login"""
     try:
-        with open("../frontend/index.html", "r", encoding='utf-8') as f:
+        with open(os.path.join(FRONTEND_DIR, "index.html"), "r", encoding="utf-8") as f:
             return HTMLResponse(content=f.read())
     except FileNotFoundError:
         return HTMLResponse(content="<h1>❌ index.html not found</h1>")
