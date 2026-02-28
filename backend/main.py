@@ -14,6 +14,12 @@ FRONTEND_DIR = os.path.join(BASE_DIR, "frontend")
 load_dotenv()
 app = FastAPI(title="AI Code Review Agent")
 
+app = FastAPI(title="AI Code Review Agent")
+
+@app.get("/favicon.ico")
+async def favicon():
+    return {}
+
 # CORS middleware to allow frontend requests
 app.add_middleware(
     CORSMiddleware,
