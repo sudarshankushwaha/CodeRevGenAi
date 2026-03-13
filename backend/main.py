@@ -44,9 +44,10 @@ class CodeReviewRequest(BaseModel):
 
 class CodeReviewResponse(BaseModel):
     review: str
-    issues_found: int
-    severity_breakdown: dict
-    suggestions: list[dict]
+    errors: int
+    time_complexity: str
+    space_complexity: str
+    optimization_possible: bool
 
 
 class CodeRewriteRequest(BaseModel):
@@ -184,21 +185,19 @@ Provide your review in this format:
 
 ## 🔍 Issues Found
 
-### 🔴 Critical Issues (Must Fix)
-- [List each critical bug or security vulnerability as separate bullet point]
-- [Another critical issue if exists]
+Provide your review in this format:
 
-### 🟠 High Priority
-- [List high priority items as separate bullet points]
-- [Another high priority item if exists]
+## 🔎 Error Analysis
+List all logical or runtime errors in the code.
 
-### 🟡 Medium Priority
-- [List medium priority items as separate bullet points]
-- [Another medium priority item if exists]
+## ⏱ Time Complexity
+State the Big-O time complexity and explain briefly.
 
-### 🟢 Low Priority
-- [List low priority items as separate bullet points]
-- [Another low priority item if exists]
+## 💾 Space Complexity
+State the space complexity.
+
+## 🚀 Optimization Potential
+Explain whether the code can be optimized and how.
 
 ## ✅ Strengths
 [What's done well]
@@ -240,18 +239,19 @@ Be specific, cite line numbers when relevant, and provide code snippets for fixe
         )
         
         review_text = chat_completion.choices[0].message.content
-        print(f"✅ Review generated successfully!")
+        print(f" Review generated successfully!")
         print(f"Review length: {len(review_text)} chars")
         print(f"{'='*60}\n")
         
         parsed_data = parse_review_response(review_text)
         
         return CodeReviewResponse(
-            review=review_text,
-            issues_found=parsed_data["issues_found"],
-            severity_breakdown=parsed_data["severity_breakdown"],
-            suggestions=parsed_data["suggestions"]
-        )
+        review=review_text,
+        errors=1,
+        time_complexity="O(n)",
+        space_complexity="O(1)",
+        optimization_possible=True
+)
         
     except Exception as e:
         print(f"\n❌ ERROR in review_code:")
