@@ -12,7 +12,7 @@ FRONTEND_DIR = os.path.join(BASE_DIR, "frontend")
 
 # Load environment variables
 load_dotenv()
-app = FastAPI(title="AI Code Review Agent")
+
 
 app = FastAPI(title="AI Code Review Agent")
 
@@ -32,7 +32,7 @@ app.add_middleware(
 
 # Initialize Groq client
 api_key = os.getenv("GROQ_API_KEY")
-print(f"✅ GROQ_API_KEY loaded: {bool(api_key)}")
+print(f" GROQ_API_KEY loaded: {bool(api_key)}")
 
 client = Groq(api_key=api_key)
 
