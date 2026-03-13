@@ -198,48 +198,6 @@ print(result)">
                 <button class="example-btn bg-gray-700 hover:bg-gray-600 p-4 rounded-lg text-left transition-all" data-lang="javascript" data-code="async function fetchData(url) {
     const response = await fetch(url);
     const data = await response.json();
-    const reviewText = data.review || "";
-
-// -------- Errors --------
-let errorCount = 0;
-const errorSection = reviewText.match(/Error Analysis([\s\S]*?)⏱/);
-
-if (errorSection) {
-    const lines = errorSection[1]
-        .split("\n")
-        .filter(l => l.trim() !== "");
-    errorCount = lines.length;
-}
-
-// -------- Time Complexity --------
-let timeComplexity = "-";
-const timeMatch = reviewText.match(/Time Complexity([\s\S]*?)💾/);
-
-if (timeMatch) {
-    const match = timeMatch[1].match(/O\([^)]+\)/);
-    if (match) timeComplexity = match[0];
-}
-
-// -------- Space Complexity --------
-let spaceComplexity = "-";
-const spaceMatch = reviewText.match(/Space Complexity([\s\S]*?)🚀/);
-
-if (spaceMatch) {
-    const match = spaceMatch[1].match(/O\([^)]+\)/);
-    if (match) spaceComplexity = match[0];
-}
-
-// -------- Optimizable --------
-let optimized = reviewText.toLowerCase().includes("optimiz") ? "Yes" : "No";
-
-// -------- Update UI --------
-document.getElementById("errorCount").textContent = errorCount;
-document.getElementById("timeComplexity").textContent = timeComplexity;
-document.getElementById("spaceComplexity").textContent = spaceComplexity;
-document.getElementById("optimized").textContent = optimized;
-
-// show the boxes
-document.getElementById("breakdown").classList.remove("hidden");
     return data;
 }
 
