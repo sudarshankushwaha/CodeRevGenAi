@@ -320,8 +320,7 @@ fetchData('https://api.example.com/data');">
 
                 // Update stats
                 statsDiv.classList.remove('hidden');
-                document.getElementById('issuesCount').textContent = 
-                    `${data.issues_found} issue${data.issues_found !== 1 ? 's' : ''} found`;
+                document.getElementById('issuesCount').textContent = "";
 
                 // Update breakdown
                 document.getElementById("errorCount").textContent = data.errors
