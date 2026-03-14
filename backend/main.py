@@ -246,11 +246,11 @@ Be specific, cite line numbers when relevant, and provide code snippets for fixe
         parsed_data = parse_review_response(review_text)
         
         return CodeReviewResponse(
-        review=review_text,
-        errors=1,
-        time_complexity="O(n)",
-        space_complexity="O(1)",
-        optimization_possible=True
+    review=review_text,
+    errors=parsed_data["issues_found"],
+    time_complexity="O(n)",       # temporary value
+    space_complexity="O(1)",      # temporary value
+    optimization_possible=True
 )
         
     except Exception as e:

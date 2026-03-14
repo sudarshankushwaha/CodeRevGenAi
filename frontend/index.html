@@ -113,7 +113,7 @@
                     </button>
                 </div>
 
-                <!-- Code Analysis -->
+               <!-- Code Analysis -->
 <div id="breakdown" class="hidden mb-4 grid grid-cols-4 gap-2">
 
     <div class="bg-red-900 bg-opacity-20 border border-red-500 rounded p-2 text-center">
@@ -122,22 +122,21 @@
     </div>
 
     <div class="bg-blue-900 bg-opacity-20 border border-blue-500 rounded p-2 text-center">
-        <div class="text-2xl font-bold text-blue-400" id="timeComplexity">-</div>
+        <div class="text-2xl font-bold text-blue-400" id="timeComplexity">O(?)</div>
         <div class="text-xs text-blue-300">Time Complexity</div>
     </div>
 
     <div class="bg-purple-900 bg-opacity-20 border border-purple-500 rounded p-2 text-center">
-        <div class="text-2xl font-bold text-purple-400" id="spaceComplexity">-</div>
+        <div class="text-2xl font-bold text-purple-400" id="spaceComplexity">O(?)</div>
         <div class="text-xs text-purple-300">Space Complexity</div>
     </div>
 
     <div class="bg-green-900 bg-opacity-20 border border-green-500 rounded p-2 text-center">
-        <div class="text-2xl font-bold text-green-400" id="optimized">-</div>
+        <div class="text-2xl font-bold text-green-400" id="optimized">No</div>
         <div class="text-xs text-green-300">Optimizable</div>
     </div>
 
 </div>
-
                 <!-- Review Tab Content -->
                 <div id="reviewContent" class="prose prose-invert max-w-none overflow-y-auto max-h-[600px] bg-gray-900 rounded-lg p-4 border border-gray-700">
                     <p class="text-gray-500 text-center py-8">Your code review will appear here...</p>
@@ -317,6 +316,20 @@ fetchData('https://api.example.com/data');">
 
                 const data = await response.json();
                 currentReview = data.review;
+                // Update analysis boxes
+document.getElementById("errorCount").textContent = data.errors;
+
+document.getElementById("timeComplexity").textContent =
+data.time_complexity;
+
+document.getElementById("spaceComplexity").textContent =
+data.space_complexity;
+
+document.getElementById("optimized").textContent =
+data.optimization_possible ? "Yes" : "No";
+
+// show the boxes
+document.getElementById("breakdown").classList.remove("hidden");
 
                 // Update stats
                 statsDiv.classList.remove('hidden');
@@ -325,14 +338,16 @@ fetchData('https://api.example.com/data');">
                 // Update breakdown
                 document.getElementById("errorCount").textContent = data.errors
 
-document.getElementById("timeComplexity").textContent =
-    data.time_complexity
+                document.getElementById("timeComplexity").textContent =
+                   data.time_complexity
 
-document.getElementById("spaceComplexity").textContent =
-    data.space_complexity
+                document.getElementById("spaceComplexity").textContent =
+                   data.space_complexity
 
-document.getElementById("optimized").textContent =
-    data.optimization_possible ? "Yes" : "No"
+                document.getElementById("optimized").textContent =
+                   data.optimization_possible ? "Yes" : "No"
+                
+                document.getElementById("breakdown").classList.remove("hidden");
 
                 // Display review
                 reviewOutput.innerHTML = marked.parse(data.review);
@@ -352,14 +367,14 @@ document.getElementById("optimized").textContent =
             } catch (error) {
                 reviewOutput.innerHTML = `
                     <div class="bg-red-900 bg-opacity-20 border border-red-500 rounded p-4">
-                        <h3 class="text-red-400 font-bold mb-2">❌ Error</h3>
+                        <h3 class="text-red-400 font-bold mb-2"> Error</h3>
                         <p class="text-red-300">${error.message}</p>
                     </div>
                 `;
             } finally {
                 loading.classList.add('hidden');
                 reviewBtn.disabled = false;
-                reviewBtn.textContent = '🚀 Review Code';
+                reviewBtn.textContent = 'Review Code';
             }
         }
 
