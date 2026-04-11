@@ -64,68 +64,28 @@ class CodeRewriteResponse(BaseModel):
 
 
 def parse_review_response(review_text: str) -> dict:
-    """Parse the LLM response to extract structured data"""
+    # Extract Errors
+    errors_section = re.search(r'## 🔴 Errors\n(.*?)(?=##|\Z)', review_text, re.DOTALL)
     
-    critical_section = re.search(r'### 🔴 Critical Issues.*?(?=###|\Z)', review_text, re.DOTALL)
-    high_section = re.search(r'### 🟠 High Priority.*?(?=###|\Z)', review_text, re.DOTALL)
-    medium_section = re.search(r'### 🟡 Medium Priority.*?(?=###|\Z)', review_text, re.DOTALL)
-    low_section = re.search(r'### 🟢 Low Priority.*?(?=###|\Z)', review_text, re.DOTALL)
-    
-    critical_count = 0
-    high_count = 0
-    medium_count = 0
-    low_count = 0
-    
-    if critical_section:
-        critical_text = critical_section.group(0)
-        critical_count = len(re.findall(r'^\s*[-*]\s', critical_text, re.MULTILINE))
-        if critical_count == 0:
-            critical_count = len([p for p in critical_text.split('\n') if p.strip() and not p.strip().startswith('#')])
-    
-    if high_section:
-        high_text = high_section.group(0)
-        high_count = len(re.findall(r'^\s*[-*]\s', high_text, re.MULTILINE))
-        if high_count == 0:
-            high_count = len([p for p in high_text.split('\n') if p.strip() and not p.strip().startswith('#')])
-    
-    if medium_section:
-        medium_text = medium_section.group(0)
-        medium_count = len(re.findall(r'^\s*[-*]\s', medium_text, re.MULTILINE))
-        if medium_count == 0:
-            medium_count = len([p for p in medium_text.split('\n') if p.strip() and not p.strip().startswith('#')])
-    
-    if low_section:
-        low_text = low_section.group(0)
-        low_count = len(re.findall(r'^\s*[-*]\s', low_text, re.MULTILINE))
-        if low_count == 0:
-            low_count = len([p for p in low_text.split('\n') if p.strip() and not p.strip().startswith('#')])
-    
-    severity_breakdown = {
-        "critical": max(critical_count, 1) if critical_section else 0,
-        "high": max(high_count, 1) if high_section else 0,
-        "medium": max(medium_count, 1) if medium_section else 0,
-        "low": max(low_count, 1) if low_section else 0
-    }
-    
-    suggestions = []
-    suggestion_section = re.search(r'## 🔧 Suggested Improvements.*?(?=##|\Z)', review_text, re.DOTALL)
-    
-    if suggestion_section:
-        suggestion_text = suggestion_section.group(0)
-        suggestion_items = re.split(r'^\s*\d+\.\s|^\s*[-*]\s', suggestion_text, flags=re.MULTILINE)
-        
-        for item in suggestion_items[1:]:
-            item_clean = item.strip()
-            if len(item_clean) > 20:
-                description = item_clean[:200] + "..." if len(item_clean) > 200 else item_clean
-                suggestions.append({"description": description})
-    
-    total_issues = severity_breakdown["critical"] + severity_breakdown["high"] + severity_breakdown["medium"] + severity_breakdown["low"]
-    
+    error_count = 0
+    if errors_section:
+        error_lines = re.findall(r'- (.*)', errors_section.group(1))
+        error_count = len(error_lines)
+
+    # Extract Time Complexity
+    time_complexity_match = re.search(r'## ⏱ Time Complexity\n(.*)', review_text)
+
+    # Extract Space Complexity
+    space_complexity_match = re.search(r'## 💾 Space Complexity\n(.*)', review_text)
+
+    # Extract Optimization
+    optimization_match = re.search(r'## 🚀 Optimizable\n(.*)', review_text)
+
     return {
-        "issues_found": total_issues,
-        "severity_breakdown": severity_breakdown,
-        "suggestions": suggestions[:10]
+        "errors": error_count,
+        "time_complexity": time_complexity_match.group(1).strip() if time_complexity_match else "N/A",
+        "space_complexity": space_complexity_match.group(1).strip() if space_complexity_match else "N/A",
+        "optimization_possible": True if optimization_match and "yes" in optimization_match.group(1).lower() else False
     }
 
 
@@ -169,7 +129,7 @@ async def review_code(request: CodeReviewRequest):
     focus_str = ", ".join(request.focus_areas)
     
     # Properly format the prompt with the code - FIX: Include the actual code with triple backticks
-    prompt = f"""You are an expert code reviewer with 15+ years of experience. Analyze this {request.language} code and provide a detailed review.
+    prompt = f"""You are a STRICT senior code reviewer with expertise in multiple programming languages including Python, JavaScript, C++, Java, and others.
 
 Focus on: {focus_str}
 
@@ -247,10 +207,10 @@ Be specific, cite line numbers when relevant, and provide code snippets for fixe
         
         return CodeReviewResponse(
     review=review_text,
-    errors=parsed_data["issues_found"],
-    time_complexity="O(n)",       # temporary value
-    space_complexity="O(1)",      # temporary value
-    optimization_possible=True
+   errors=parsed_data["errors"],
+time_complexity=parsed_data["time_complexity"],
+space_complexity=parsed_data["space_complexity"],
+optimization_possible=parsed_data["optimization_possible"]
 )
         
     except Exception as e:
@@ -273,7 +233,9 @@ async def rewrite_code(request: CodeRewriteRequest):
         raise HTTPException(status_code=400, detail="Code cannot be empty")
     
     # FIX: Include the actual code with triple backticks
-    prompt = f"""You are an expert {request.language} developer. Rewrite this code to fix all issues, improve performance, security, and follow best practices.
+    prompt = f"""You are an expert {request.language} developer with deep knowledge of best practices, edge cases, and performance optimization across languages.
+
+Rewrite this code to fix all errors, improve performance, and follow best practices.
 
 Original Code:
 ```{request.language}
